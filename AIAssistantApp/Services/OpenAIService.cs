@@ -11,46 +11,21 @@ namespace AIAssistantApp.Services
 {
     public class OpenAIService : ILLMService
     {
-        private readonly ChatClient _client;
+        private readonly ChatClient _chatClient;
 
         public OpenAIService()
         {
-            _client = new ChatClient(
+            _chatClient = new ChatClient(
             model: "gpt-4o-mini",
             apiKey: OpenAIConfig.ApiKey);
         }
 
-        public async Task<string> GenerateEmailAsync(EmailRequest request)
+        public async Task<string> GenerateResponseAsync(string prompt) 
         {
-            try
-            {
-                string prompt = BuildPrompt(request);
-                ChatCompletion completion =
-                    await _client.CompleteChatAsync(prompt);
+            ChatCompletion completion =
+                await _chatClient.CompleteChatAsync(prompt);
 
-                return completion.Content[0].Text;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error generating email: {ex.Message}");
-                return string.Empty;
-            }
-        }
-
-        // because the LLM can not understand the object but text
-        public static string BuildPrompt(EmailRequest request)
-        {
-            return $"""
-                Generate an email using the following information:
-
-                Purpose: {request.Purpose}
-                Recipient: {request.Recipient}
-                Reason: {request.Reason}
-                Duration: {request.Duration}
-                Tone: {request.Tone}
-
-                Return only the email.
-                """;
+            return completion.Content[0].Text;
         }
     }
 }

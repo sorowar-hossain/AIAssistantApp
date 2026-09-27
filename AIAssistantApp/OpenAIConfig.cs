@@ -9,7 +9,7 @@ namespace AIAssistantApp
     public static class OpenAIConfig
     {
         /*
-            we can set this value using Windows PowerShell command,
+            we can set this Environment Variable's value using Windows PowerShell command,
             because  anyone can not see the secret key
          */
         public static string ApiKey { get; } =

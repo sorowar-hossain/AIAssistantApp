@@ -9,6 +9,6 @@ namespace AIAssistantApp.IServices
 {
     public interface ILLMService
     {
-        Task<string> GenerateEmailAsync(EmailRequest request); 
+        Task<string> GenerateResponseAsync(string prombt);  
     }
 }

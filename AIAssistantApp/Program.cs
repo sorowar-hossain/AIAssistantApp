@@ -12,9 +12,44 @@ var request = new EmailRequest
     Duration = "3 days",
     Tone = "Professional"
 };
-OpenAIService service = new OpenAIService();
+EmailGeneratorService service = new EmailGeneratorService(new OpenAIService());
 var responsemail = service.GenerateEmailAsync(request);
 Console.WriteLine(responsemail);
+
+
+
+
+
+var schema = new DatabaseSchema
+{
+    Tables =
+    {
+        new TableSchema
+        {
+            TableName = "Employees",
+            Columns =
+            {
+                "Id",
+                "Name",
+                "Department",
+                "Salary",
+                "JoiningDate"
+            }
+        }
+    }
+};
+
+var userQuestion =
+    "Show all employees who work in the IT department.";
+
+var sqlGeneratorService = new SqlGeneratorService(new OpenAIService());
+
+var response = sqlGeneratorService.GenerateSqlQuery(
+    schema,
+    userQuestion);
+
+Console.WriteLine("========== PROMPT ==========");
+Console.WriteLine(response);
 
 
 Console.ReadKey();
