@@ -48,7 +48,23 @@ namespace AIAssistantApp.Services
                 schema,
                 userQuestion);
 
+            if (!ValidateSql(sql))
+            {
+                return "You have no permission to execute this query..!";
+            }
+
             var table = await sqlExecutionService.ExecuteQueryAsync(sql);
+            var result = ConvertDataTableToText(table);
+            return result;
+        }
+
+        public string ConvertDataTableToText(DataTable table)
+        {
+            if (table.Rows.Count == 0)
+            {
+                return "No records found.";
+            }
+
             var result = new StringBuilder();
             foreach (DataRow row in table.Rows)
             {
@@ -56,12 +72,43 @@ namespace AIAssistantApp.Services
                 {
                     result.AppendLine(
                                 $"{column.ColumnName}: {row[column]}");
+                    result.AppendLine("------");
                 }
             }
 
             return result.ToString();
         }
 
+        public bool ValidateSql(string sql)
+        {
+            if (string.IsNullOrWhiteSpace(sql))
+                return false;
 
+            sql = sql.Trim();
+
+            // Only allow SELECT queries
+            if (!sql.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Reject dangerous commands
+            string[] forbiddenKeywords =
+            {
+                "INSERT",
+                "UPDATE",
+                "DELETE",
+                "DROP",
+                "ALTER",
+                "TRUNCATE",
+                "CREATE"
+            };
+
+            foreach (var keyword in forbiddenKeywords)
+            {
+                if (sql.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    return false;
+            }
+
+            return true;
+        }
     }
 }
