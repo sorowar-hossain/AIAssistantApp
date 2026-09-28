@@ -126,6 +126,14 @@ namespace AIAssistantApp.Services
             return true;
         }
 
+
+        /*
+         First LLM call → converts the user's question into SQL.
+        SQL Server → executes the SQL and gives the actual data.
+        Second LLM call → converts that data into a natural-language answer.
+         
+         */
+
         public async Task<string> GenerateNaturalLanguageResponseAsync(
         string userQuestion,
         string sqlResult)
