@@ -35,16 +35,18 @@ namespace AIAssistantApp.Services
     {
         private readonly SqlGeneratorService sqlGeneratorService;
         private readonly SqlExecutionService sqlExecutionService;
+        private readonly OpenAIService openAIService; 
 
-        public DatabaseAssistantService(SqlGeneratorService sqlGeneratorService, SqlExecutionService sqlExecutionService)
+        public DatabaseAssistantService(SqlGeneratorService sqlGeneratorService, SqlExecutionService sqlExecutionService, OpenAIService openAIService)
         {
             this.sqlGeneratorService = sqlGeneratorService;
             this.sqlExecutionService = sqlExecutionService;
+            this.openAIService = openAIService;
         }
 
         public async Task<string> ExecuteUserQuestionAsync(
-     DatabaseSchema schema,
-     string userQuestion)
+         DatabaseSchema schema,
+         string userQuestion)
         {
             try
             {
@@ -59,7 +61,10 @@ namespace AIAssistantApp.Services
 
                 var table = await sqlExecutionService.ExecuteQueryAsync(sql);
 
-                return ConvertDataTableToText(table);
+                var result = ConvertDataTableToText(table);
+
+                var naturalLanguageResponse = await GenerateNaturalLanguageResponseAsync(userQuestion, result);
+                return naturalLanguageResponse;
             }
             catch (Exception ex)
             {
@@ -119,6 +124,33 @@ namespace AIAssistantApp.Services
             }
 
             return true;
+        }
+
+        public async Task<string> GenerateNaturalLanguageResponseAsync(
+        string userQuestion,
+        string sqlResult)
+        {
+            var prompt = new StringBuilder();
+
+            prompt.AppendLine("You are a helpful database assistant.");
+            prompt.AppendLine();
+            prompt.AppendLine("Answer the user's question using only the database result.");
+            prompt.AppendLine("Do not invent information.");
+            prompt.AppendLine("Keep the answer clear and concise.");
+            prompt.AppendLine();
+
+            prompt.AppendLine("USER QUESTION:");
+            prompt.AppendLine(userQuestion);
+            prompt.AppendLine();
+
+            prompt.AppendLine("DATABASE RESULT:");
+            prompt.AppendLine(sqlResult);
+            prompt.AppendLine();
+
+            prompt.AppendLine("Give a natural-language answer to the user.");
+
+            return await openAIService.GenerateResponseAsync(
+                prompt.ToString());
         }
     }
 }
