@@ -1,9 +1,10 @@
 ﻿
 
+using AIAssistantApp;
 using AIAssistantApp.Models;
 using AIAssistantApp.Services;
 
-
+/*
 var request = new EmailRequest
 {
     Purpose = "Leave Request",
@@ -15,7 +16,7 @@ var request = new EmailRequest
 EmailGeneratorService service = new EmailGeneratorService(new OpenAIService());
 var responsemail = service.GenerateEmailAsync(request);
 Console.WriteLine(responsemail);
-
+*/
 
 
 
@@ -39,9 +40,11 @@ var schema = new DatabaseSchema
     }
 };
 
+
+
+/* // 
 var userQuestion =
     "Show all employees who work in the IT department.";
-
 var sqlGeneratorService = new SqlGeneratorService(new OpenAIService());
 
 var response = sqlGeneratorService.GenerateSqlQuery(
@@ -49,6 +52,13 @@ var response = sqlGeneratorService.GenerateSqlQuery(
     userQuestion);
 
 Console.WriteLine("========== PROMPT ==========");
+Console.WriteLine(response);
+*/
+
+var userQuestion ="how many employee work in the IT department.";
+SqlExecutionService sqlExecutionService = new SqlExecutionService(OpenAIConfig.connectionString);
+var databaseAssistant = new DatabaseAssistantService(new SqlGeneratorService(new OpenAIService()), sqlExecutionService);
+var response = await databaseAssistant.ExecuteUserQuestionAsync(schema,userQuestion);
 Console.WriteLine(response);
 
 

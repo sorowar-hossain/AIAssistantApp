@@ -15,5 +15,8 @@ namespace AIAssistantApp
         public static string ApiKey { get; } =
             Environment.GetEnvironmentVariable("OPENAI_API_KEY")
             ?? throw new Exception("OpenAI API key not found.");
+
+        public static string connectionString =
+    "Server=YOUR_SERVER;Database=YOUR_DATABASE;Trusted_Connection=True;TrustServerCertificate=True;";
     }
 }
