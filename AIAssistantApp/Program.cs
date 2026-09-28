@@ -57,7 +57,7 @@ Console.WriteLine(response);
 
 var userQuestion ="how many employee work in the IT department.";
 SqlExecutionService sqlExecutionService = new SqlExecutionService(OpenAIConfig.connectionString);
-var databaseAssistant = new DatabaseAssistantService(new SqlGeneratorService(new OpenAIService()), sqlExecutionService);
+var databaseAssistant = new DatabaseAssistantService(new SqlGeneratorService(new OpenAIService()), sqlExecutionService,new OpenAIService());
 var response = await databaseAssistant.ExecuteUserQuestionAsync(schema,userQuestion);
 Console.WriteLine(response);
 
