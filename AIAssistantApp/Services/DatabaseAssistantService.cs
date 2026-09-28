@@ -42,20 +42,29 @@ namespace AIAssistantApp.Services
             this.sqlExecutionService = sqlExecutionService;
         }
 
-        public async Task<string> ExecuteUserQuestionAsync(DatabaseSchema schema,string userQuestion)
+        public async Task<string> ExecuteUserQuestionAsync(
+     DatabaseSchema schema,
+     string userQuestion)
         {
-            var sql = await sqlGeneratorService.GenerateSqlQuery(  
-                schema,
-                userQuestion);
-
-            if (!ValidateSql(sql))
+            try
             {
-                return "You have no permission to execute this query..!";
-            }
+                var sql = await sqlGeneratorService.GenerateSqlQuery(
+                    schema,
+                    userQuestion);
 
-            var table = await sqlExecutionService.ExecuteQueryAsync(sql);
-            var result = ConvertDataTableToText(table);
-            return result;
+                if (!ValidateSql(sql))
+                {
+                    return "You have no permission to execute this query.";
+                }
+
+                var table = await sqlExecutionService.ExecuteQueryAsync(sql);
+
+                return ConvertDataTableToText(table);
+            }
+            catch (Exception ex)
+            {
+                return $"Unable to execute the query. Error: {ex.Message}";
+            }
         }
 
         public string ConvertDataTableToText(DataTable table)
@@ -72,8 +81,9 @@ namespace AIAssistantApp.Services
                 {
                     result.AppendLine(
                                 $"{column.ColumnName}: {row[column]}");
-                    result.AppendLine("------");
+                   
                 }
+                result.AppendLine("------");
             }
 
             return result.ToString();
