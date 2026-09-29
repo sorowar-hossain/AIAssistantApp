@@ -8,6 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Data\RAG_Data.pdf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="IServices\" />
     <Folder Include="Documents\" />
   </ItemGroup>
@@ -16,6 +22,7 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.0" />
     <PackageReference Include="Ollama" Version="1.14.0" />
     <PackageReference Include="OpenAI" Version="2.14.0" />
+    <PackageReference Include="PdfPig" Version="0.1.15" />
   </ItemGroup>
 
 </Project>
