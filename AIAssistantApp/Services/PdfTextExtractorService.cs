@@ -12,6 +12,7 @@ namespace AIAssistantApp.Services
     {
         List<PdfPage> pages = new List<PdfPage>();
         DocumentChunkService chunkService = new DocumentChunkService();
+        RagEmbeddingService embeddingService = new RagEmbeddingService();   
 
         public PdfTextExtractorService()
         {
@@ -32,12 +33,17 @@ namespace AIAssistantApp.Services
 
             foreach (var chunk in chunks)
             {
-                Console.WriteLine("----------------------------");
-                Console.WriteLine($"Chunk ID: {chunk.Id}");
-                Console.WriteLine($"Page: {chunk.PageNumber}");
-                Console.WriteLine($"Title: {chunk.SectionTitle}");
-                Console.WriteLine($"Text: {chunk.Text}");
+                //Console.WriteLine("----------------------------");
+                //Console.WriteLine($"Chunk ID: {chunk.Id}");
+                //Console.WriteLine($"Page: {chunk.PageNumber}");
+                //Console.WriteLine($"Title: {chunk.SectionTitle}");
+                //Console.WriteLine($"Text: {chunk.Text}");
+
+                chunk.Embedding = embeddingService.GenerateEmbedding(chunk.Text);
             }
+
+            int a = 0;
+
         }
 
         public List<PdfPage> ExtractText()
