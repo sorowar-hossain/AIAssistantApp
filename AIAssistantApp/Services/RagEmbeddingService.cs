@@ -177,7 +177,7 @@ namespace AIAssistantApp.Services
             tokenizer.Dispose();
         }
 
-        public double[] GenerateEmbedding(string text)
+        public async Task< double[]> GenerateEmbedding(string text)
         {
             var encoding = tokenizer
                 .Encode(text, true)
@@ -235,12 +235,12 @@ namespace AIAssistantApp.Services
                         .First(x => x.Name == "last_hidden_state")
                         .AsTensor<float>();
 
-            return MeanPooling(
+            return await MeanPooling(
                 output,
                 attentionMask);
         }
 
-        private double[] MeanPooling(Tensor<float> tokenEmbeddings, long[] attentionMask)
+        private async Task< double[]> MeanPooling(Tensor<float> tokenEmbeddings, long[] attentionMask)
         {
             int sequenceLength = tokenEmbeddings.Dimensions[1];
             int embeddingSize = tokenEmbeddings.Dimensions[2];
@@ -277,11 +277,11 @@ namespace AIAssistantApp.Services
                     totalTokens;
             }
 
-            return Normalize(sentenceEmbedding);
+            return await Normalize(sentenceEmbedding);
         }
 
 
-        private double[] Normalize(double[] vector)
+        private async Task< double[]> Normalize(double[] vector)
         {
             double magnitude = 0;
 

@@ -9,7 +9,11 @@ namespace AIAssistantApp.Services
 {
     public class RagVectorSearchService
     {
-        public List<(DocumentChunk Chunk, double Score)> Search(
+        /*
+            There is no I/O operation here—no database, file, HTTP request, etc.
+            So no need asynchornus method, just synchornus
+         */
+        public async Task<List<(DocumentChunk Chunk, double Score)>> Search(
             double[] queryEmbedding,
             List<DocumentChunk> chunks,
             int topK = 3)

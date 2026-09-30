@@ -16,37 +16,10 @@ namespace AIAssistantApp.Services
 
         public PdfTextExtractorService()
         {
-            pages = ExtractText();
-
-            //foreach (PdfPage page in pages)
-            //{
-            //    Console.WriteLine("------------");
-            //    Console.WriteLine($"Page No: {page.PageNumber}");
-            //    Console.WriteLine(page.Title);
-            //    Console.WriteLine(page.Text);
-            //}
-
-            List<DocumentChunk> chunks = chunkService.CreateChunks(
-                                    pages,
-                                    maxWords: 50,
-                                    overlapWords: 10);
-
-            foreach (var chunk in chunks)
-            {
-                //Console.WriteLine("----------------------------");
-                //Console.WriteLine($"Chunk ID: {chunk.Id}");
-                //Console.WriteLine($"Page: {chunk.PageNumber}");
-                //Console.WriteLine($"Title: {chunk.SectionTitle}");
-                //Console.WriteLine($"Text: {chunk.Text}");
-
-                chunk.Embedding = embeddingService.GenerateEmbedding(chunk.Text);
-            }
-
-            int a = 0;
-
+          
         }
 
-        public List<PdfPage> ExtractText()
+        public async Task< List<PdfPage>> ExtractText()
         {
             string pdfPath = Path.Combine(
                 AppContext.BaseDirectory,

@@ -9,6 +9,9 @@ namespace AIAssistantApp.Services
 {
     public class RagPipelineService
     {
+        List<PdfPage> pages = new List<PdfPage>();
+        List<DocumentChunk> responsechunks= new List<DocumentChunk>();  
+
         private readonly PdfTextExtractorService pdfTextExtractorService;
         private readonly DocumentChunkService documentChunkService;
         private readonly RagEmbeddingService ragEmbeddingService;
@@ -27,15 +30,34 @@ namespace AIAssistantApp.Services
             this.ragVectorSearchService = ragVectorSearchService;
         }
 
-        public List<(DocumentChunk Chunk, double Score)> RagSearch(string question)
+        public async Task< List<(DocumentChunk Chunk, double Score)>> RagSearch(string question)
         {
-            // 1. Generate question embedding
-            // 2. Search similar chunks
-            // 3. Return top results
+            pages = await pdfTextExtractorService.ExtractText();
+            foreach (PdfPage page in pages)
+            {
+                Console.WriteLine("------------");
+                Console.WriteLine($"Page No: {page.PageNumber}");
+                Console.WriteLine(page.Title);
+                Console.WriteLine(page.Text);
+            }
+
+            var chunks = await documentChunkService.CreateChunks(pages);
+
+            foreach (var chunk in chunks)
+            {
+                //Console.WriteLine("----------------------------");
+                //Console.WriteLine($"Chunk ID: {chunk.Id}");
+                //Console.WriteLine($"Page: {chunk.PageNumber}");
+                //Console.WriteLine($"Title: {chunk.SectionTitle}");
+                //Console.WriteLine($"Text: {chunk.Text}");
+
+                chunk.Embedding = await ragEmbeddingService.GenerateEmbedding(chunk.Text);
+            }
 
 
-            double[] queryEmbedding=ragEmbeddingService.GenerateEmbedding(question);
-            //var result=ragVectorSearchService.Search(queryEmbedding,)
+            double[] queryEmbedding = await ragEmbeddingService.GenerateEmbedding(question);
+
+            //responsechunks = ragVectorSearchService.Search(queryEmbedding, chunks, 3);
 
             return null;
         }

@@ -21,7 +21,7 @@ namespace AIAssistantApp.Services
         ✅ The chunks are small enough for semantic retrieval
          
          */
-        public List<DocumentChunk> CreateChunks(
+        public async Task<List<DocumentChunk>> CreateChunks(
         List<PdfPage> pages,
         int maxWords = 50,
         int overlapWords = 10)
