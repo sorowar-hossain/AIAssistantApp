@@ -18,10 +18,31 @@ namespace AIAssistantApp.Services
         | **Semantic matching**     | Compares embeddings/meaning | Different wording with similar meaning | Can return surprising matches               |
         | **Hybrid search**         | Combines both               | Exact terms + meaning                  | More complex                                |
 
+        So how do we solve your problem?
+        For your RAG project, I recommend we stop here and improve retrieval before moving to the LLM.
+
+        We'll build:
+        User Question
+              
+                ↓
+     ┌───────────────────────┐
+     │                       │
+     ↓                       ↓
+    Keyword Search      Semantic Search
+     │                       │
+     ↓                       ↓
+    Keyword Score       Semantic Score
+     │                       │
+     └───────────┬───────────┘
+                 ↓
+           Combined Score
+                 ↓
+              Top-K
+
          */
 
         List<PdfPage> pages = new List<PdfPage>();
-       
+       private readonly RagHybridSearchService ragHybridSearchService;
         private readonly PdfTextExtractorService pdfTextExtractorService;
         private readonly DocumentChunkService documentChunkService;
         private readonly RagEmbeddingService ragEmbeddingService;
@@ -31,13 +52,15 @@ namespace AIAssistantApp.Services
            PdfTextExtractorService pdfTextExtractorService,
            DocumentChunkService documentChunkService,
            RagEmbeddingService ragEmbeddingService,
-           RagVectorSearchService ragVectorSearchService
+           RagVectorSearchService ragVectorSearchService,
+           RagHybridSearchService ragHybridSearchService
         )
         {
             this.pdfTextExtractorService = pdfTextExtractorService;
             this.documentChunkService = documentChunkService;
             this.ragEmbeddingService = ragEmbeddingService;
             this.ragVectorSearchService = ragVectorSearchService;
+            this.ragHybridSearchService = ragHybridSearchService;
         }
 
         public async Task< List<(DocumentChunk Chunk, double Score)>> RagSearch(string question)
@@ -66,11 +89,12 @@ namespace AIAssistantApp.Services
                 chunk.Embedding = await ragEmbeddingService.GenerateEmbedding(chunk.Text);
             }
 
-
+            Console.WriteLine($"Question: {question}");
             double[] queryEmbedding = await ragEmbeddingService.GenerateEmbedding(question);
 
-           var responsechunks =await ragVectorSearchService.Search(queryEmbedding, chunks, 3);
-            Console.WriteLine($"Question: {question}");
+            var responsechunks = await ragHybridSearchService.SearchHybrid(question, queryEmbedding, chunks,3);
+            //var responsechunks =await ragVectorSearchService.Search(queryEmbedding, chunks, 3);
+
             foreach (var result in responsechunks)
             {
                 Console.WriteLine("--------------------------------------");
@@ -81,6 +105,9 @@ namespace AIAssistantApp.Services
                 Console.WriteLine($"Text: {result.Chunk.Text}");
                 Console.WriteLine("--------------------------------------");
             }
+
+
+
             return null;
         }
     }

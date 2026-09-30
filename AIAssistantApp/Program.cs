@@ -67,12 +67,17 @@ RagPipelineService ragPipelineService =
                         new RagPipelineService(new PdfTextExtractorService(), 
                         new DocumentChunkService(), 
                         new RagEmbeddingService(), 
-                        new RagVectorSearchService());
+                        new RagVectorSearchService(),
+                        new RagHybridSearchService(new RagVectorSearchService()));
 //var question = "How many days of annual leave are employees entitled to?";
+//var question = "What is the annual leave entitlement for employees?";
+//var question = "How much vacation time does an employee get each year?";
 
-var question = "What distance metric should be used for vector similarity searches, and which metric is explicitly banned?";
+//var question = "Where can I see my pay details?";
+//var question = "When is salary information updated?";
+//var question = "Who reviews employee attendance records?";
+//var question = "What are the normal daily working hours?";
 
-var response = ragPipelineService.RagSearch(
-    "Emergency leave may be requested when an unexpected personal situation requires immediate absence. Employees should contact their manager as soon as possible when emergency leave is necessary"
-    );
+var question = "Do remote employees have to follow the same attendance rules?";
+var response = ragPipelineService.RagSearch(question);
 Console.ReadKey();
