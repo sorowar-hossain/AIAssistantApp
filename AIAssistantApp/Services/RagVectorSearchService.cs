@@ -13,12 +13,12 @@ namespace AIAssistantApp.Services
             There is no I/O operation here—no database, file, HTTP request, etc.
             So no need asynchornus method, just synchornus
          */
-        public async Task<List<(DocumentChunk Chunk, double Score)>> Search(
-            double[] queryEmbedding,
-            List<DocumentChunk> chunks,
-            int topK = 3)
+        public Task<List<(DocumentChunk Chunk, double Score)>> Search(
+          double[] queryEmbedding,
+          List<DocumentChunk> chunks,
+          int topK = 3)
         {
-            return chunks
+            var results = chunks
                 .Where(x => x.Embedding != null &&
                             x.Embedding.Length > 0)
                 .Select(x => (
@@ -29,11 +29,11 @@ namespace AIAssistantApp.Services
                 .OrderByDescending(x => x.Score)
                 .Take(topK)
                 .ToList();
+
+            return Task.FromResult(results);
         }
 
-        private double CalculateCosineSimilarity(
-            double[] vectorA,
-            double[] vectorB)
+        private double CalculateCosineSimilarity(double[] vectorA, double[] vectorB)
         {
             if (vectorA.Length != vectorB.Length)
                 throw new ArgumentException(

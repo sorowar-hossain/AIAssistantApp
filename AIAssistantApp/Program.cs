@@ -63,6 +63,16 @@ Console.WriteLine(response);
     Console.WriteLine(response);
 */
 
-PdfTextExtractorService pdfTextExtractorService= new PdfTextExtractorService(); 
+RagPipelineService ragPipelineService = 
+                        new RagPipelineService(new PdfTextExtractorService(), 
+                        new DocumentChunkService(), 
+                        new RagEmbeddingService(), 
+                        new RagVectorSearchService());
+//var question = "How many days of annual leave are employees entitled to?";
 
+var question = "What distance metric should be used for vector similarity searches, and which metric is explicitly banned?";
+
+var response = ragPipelineService.RagSearch(
+    "Emergency leave may be requested when an unexpected personal situation requires immediate absence. Employees should contact their manager as soon as possible when emergency leave is necessary"
+    );
 Console.ReadKey();

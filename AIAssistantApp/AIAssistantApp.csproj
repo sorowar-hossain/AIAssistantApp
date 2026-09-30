@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Data\RAG_Data2.pdf" />
     <None Remove="Models\all-MiniLM-L6-v2\model.onnx" />
     <None Remove="Models\all-MiniLM-L6-v2\tokenizer.json" />
   </ItemGroup>
@@ -15,6 +16,9 @@
   <ItemGroup>
     <Content Include="Data\RAG_Data.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Data\RAG_Data2.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Models\all-MiniLM-L6-v2\model.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

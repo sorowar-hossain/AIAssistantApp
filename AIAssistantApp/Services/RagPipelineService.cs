@@ -9,9 +9,19 @@ namespace AIAssistantApp.Services
 {
     public class RagPipelineService
     {
-        List<PdfPage> pages = new List<PdfPage>();
-        List<DocumentChunk> responsechunks= new List<DocumentChunk>();  
+        /*
+         For your RAG project, neither is universally better. They solve different problems.
 
+        | Approach                  | How it works                | Good at                                | Weakness                                    |
+        | ------------------------- | --------------------------- | -------------------------------------- | ------------------------------------------- |
+        | **Word/keyword matching** | Looks for matching words    | Exact terms, names, IDs, numbers       | Misses similar meaning with different words |
+        | **Semantic matching**     | Compares embeddings/meaning | Different wording with similar meaning | Can return surprising matches               |
+        | **Hybrid search**         | Combines both               | Exact terms + meaning                  | More complex                                |
+
+         */
+
+        List<PdfPage> pages = new List<PdfPage>();
+       
         private readonly PdfTextExtractorService pdfTextExtractorService;
         private readonly DocumentChunkService documentChunkService;
         private readonly RagEmbeddingService ragEmbeddingService;
@@ -33,23 +43,25 @@ namespace AIAssistantApp.Services
         public async Task< List<(DocumentChunk Chunk, double Score)>> RagSearch(string question)
         {
             pages = await pdfTextExtractorService.ExtractText();
-            foreach (PdfPage page in pages)
-            {
-                Console.WriteLine("------------");
-                Console.WriteLine($"Page No: {page.PageNumber}");
-                Console.WriteLine(page.Title);
-                Console.WriteLine(page.Text);
-            }
+            //foreach (PdfPage page in pages)
+            //{
+            //    Console.WriteLine("------------");
+            //    Console.WriteLine($"Page No: {page.PageNumber}");
+            //    Console.WriteLine(page.Title);
+            //    Console.WriteLine(page.Text);
+            //    Console.WriteLine("------------");
+            //}
 
             var chunks = await documentChunkService.CreateChunks(pages);
 
             foreach (var chunk in chunks)
             {
-                //Console.WriteLine("----------------------------");
-                //Console.WriteLine($"Chunk ID: {chunk.Id}");
-                //Console.WriteLine($"Page: {chunk.PageNumber}");
-                //Console.WriteLine($"Title: {chunk.SectionTitle}");
-                //Console.WriteLine($"Text: {chunk.Text}");
+                Console.WriteLine("----------------------------");
+                Console.WriteLine($"Chunk ID: {chunk.Id}");
+                Console.WriteLine($"Page: {chunk.PageNumber}");
+                Console.WriteLine($"Title: {chunk.SectionTitle}");
+                Console.WriteLine($"Text: {chunk.Text}");
+                Console.WriteLine("----------------------------");
 
                 chunk.Embedding = await ragEmbeddingService.GenerateEmbedding(chunk.Text);
             }
@@ -57,8 +69,18 @@ namespace AIAssistantApp.Services
 
             double[] queryEmbedding = await ragEmbeddingService.GenerateEmbedding(question);
 
-            //responsechunks = ragVectorSearchService.Search(queryEmbedding, chunks, 3);
-
+           var responsechunks =await ragVectorSearchService.Search(queryEmbedding, chunks, 3);
+            Console.WriteLine($"Question: {question}");
+            foreach (var result in responsechunks)
+            {
+                Console.WriteLine("--------------------------------------");
+                Console.WriteLine($"Chunk ID: {result.Chunk.Id}");
+                Console.WriteLine($"Page: {result.Chunk.PageNumber}");
+                Console.WriteLine($"Title: {result.Chunk.SectionTitle}");
+                Console.WriteLine($"Score: {result.Score:F4}");
+                Console.WriteLine($"Text: {result.Chunk.Text}");
+                Console.WriteLine("--------------------------------------");
+            }
             return null;
         }
     }
