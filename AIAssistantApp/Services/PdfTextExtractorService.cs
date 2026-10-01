@@ -63,23 +63,23 @@ namespace AIAssistantApp.Services
 
         private string GetTitle(int pageNumber)
         {
-            //return pageNumber switch
-            //{
-            //    1 => "Employee Leave Policy",
-            //    2 => "Salary Information",
-            //    3 => "Employee Attendance Policy",
-            //    _ => ""
-            //};
-
             return pageNumber switch
             {
-                1 => "OVERVIEW & SCOPE",
-                2 => "DATA CLASSIFICATION & EMBEDDING RULES",
-                3 => "VECTOR DATABASE HYGIENE",
-                4 => "RETRIEVAL & ACCURACY THRESHOLDS",
-                5 => "COMPLIANCE & AUDITING",
+                1 => "Employee Leave Policy",
+                2 => "Salary Information",
+                3 => "Employee Attendance Policy",
                 _ => ""
             };
+
+            //return pageNumber switch
+            //{
+            //    1 => "OVERVIEW & SCOPE",
+            //    2 => "DATA CLASSIFICATION & EMBEDDING RULES",
+            //    3 => "VECTOR DATABASE HYGIENE",
+            //    4 => "RETRIEVAL & ACCURACY THRESHOLDS",
+            //    5 => "COMPLIANCE & AUDITING",
+            //    _ => ""
+            //};
         }
     }
 }

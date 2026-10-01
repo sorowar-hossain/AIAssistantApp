@@ -78,6 +78,7 @@ RagPipelineService ragPipelineService =
 //var question = "Who reviews employee attendance records?";
 //var question = "What are the normal daily working hours?";
 
-var question = "Do remote employees have to follow the same attendance rules?";
+//var question = "Do remote employees have to follow the same attendance rules?";
+var question = "How to view the attendance record?";
 var response = ragPipelineService.RagSearch(question);
 Console.ReadKey();

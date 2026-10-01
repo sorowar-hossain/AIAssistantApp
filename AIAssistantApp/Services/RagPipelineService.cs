@@ -63,7 +63,7 @@ namespace AIAssistantApp.Services
             this.ragHybridSearchService = ragHybridSearchService;
         }
 
-        public async Task< List<(DocumentChunk Chunk, double Score)>> RagSearch(string question)
+        public async Task<List<(DocumentChunk Chunk, double Score)>> RagSearch(string question)
         {
             pages = await pdfTextExtractorService.ExtractText();
             //foreach (PdfPage page in pages)
@@ -95,20 +95,42 @@ namespace AIAssistantApp.Services
             var responsechunks = await ragHybridSearchService.SearchHybrid(question, queryEmbedding, chunks,3);
             //var responsechunks =await ragVectorSearchService.Search(queryEmbedding, chunks, 3);
 
-            foreach (var result in responsechunks)
+            //foreach (var result in responsechunks)
+            //{
+            //    Console.WriteLine("--------------------------------------");
+            //    Console.WriteLine($"Chunk ID: {result.Chunk.Id}");
+            //    Console.WriteLine($"Page: {result.Chunk.PageNumber}");
+            //    Console.WriteLine($"Title: {result.Chunk.SectionTitle}");
+            //    Console.WriteLine($"Score: {result.Score:F4}");
+            //    Console.WriteLine($"Text: {result.Chunk.Text}");
+            //    Console.WriteLine("--------------------------------------");
+            //}
+
+            var combineResponse=BuildContext(responsechunks);
+            Console.WriteLine(combineResponse);
+
+            return responsechunks;
+        }
+
+        public string BuildContext(List<(DocumentChunk Chunk, double Score)> results)
+        {
+            if (results == null || results.Count == 0)
+                return string.Empty;
+
+            var context = new StringBuilder();
+
+            foreach (var result in results)
             {
-                Console.WriteLine("--------------------------------------");
-                Console.WriteLine($"Chunk ID: {result.Chunk.Id}");
-                Console.WriteLine($"Page: {result.Chunk.PageNumber}");
-                Console.WriteLine($"Title: {result.Chunk.SectionTitle}");
-                Console.WriteLine($"Score: {result.Score:F4}");
-                Console.WriteLine($"Text: {result.Chunk.Text}");
-                Console.WriteLine("--------------------------------------");
+                context.AppendLine("--------------------------------------");
+                context.AppendLine($"Source: Page {result.Chunk.PageNumber}");
+                context.AppendLine($"Section: {result.Chunk.SectionTitle}");
+                context.AppendLine(result.Chunk.Text);
+                context.AppendLine();
+                context.AppendLine("--------------------------------------");
+                context.AppendLine();
             }
 
-
-
-            return null;
+            return context.ToString();
         }
     }
 }
