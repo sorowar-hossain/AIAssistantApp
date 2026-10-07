@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <Folder Include="IServices\" />
-    <Folder Include="Documents\" />
+    <Folder Include="AIModel\" />
   </ItemGroup>
 
   <ItemGroup>
